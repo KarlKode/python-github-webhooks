@@ -163,8 +163,8 @@ def index():
 
         ran[basename(s)] = {
             'returncode': proc.returncode,
-            'stdout': stdout,
-            'stderr': stderr,
+            'stdout': stdout.decode('utf-8'),
+            'stderr': stderr.decode('utf-8'),
         }
 
         # Log errors if a hook failed
@@ -180,7 +180,7 @@ def index():
     if not info:
         return ''
 
-    output = dumps(ran.decode('utf-8'), sort_keys=True, indent=4)
+    output = dumps(ran, sort_keys=True, indent=4)
     logging.info(output)
     return output
 
