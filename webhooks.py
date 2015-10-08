@@ -180,10 +180,11 @@ def index():
     if not info:
         return ''
 
-    output = dumps(ran, sort_keys=True, indent=4)
+    output = dumps(ran.decode('utf-8', sort_keys=True, indent=4)
     logging.info(output)
     return output
 
 
 if __name__ == '__main__':
     application.run(debug=True, host='0.0.0.0')
+
