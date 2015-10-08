@@ -180,7 +180,7 @@ def index():
     if not info:
         return ''
 
-    output = dumps(ran.decode('utf-8', sort_keys=True, indent=4)
+    output = dumps(ran.decode('utf-8'), sort_keys=True, indent=4)
     logging.info(output)
     return output
 
