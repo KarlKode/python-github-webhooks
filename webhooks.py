@@ -21,7 +21,6 @@ logging.basicConfig(stream=stderr)
 
 import hmac
 from hashlib import sha1
-from json import loads, dumps
 from subprocess import Popen, PIPE
 from tempfile import mkstemp
 from os import access, X_OK, remove
@@ -29,13 +28,14 @@ from os.path import isfile, abspath, normpath, dirname, join, basename
 
 import requests
 from ipaddress import ip_address, ip_network
-from flask import Flask, request, abort
+from flask import Flask, request, abort, jsonify
+from flask.json import loads, dumps
 
 
 application = Flask(__name__)
 
 
-@application.route('/', methods=['GET', 'POST'])
+@application.route('/', methods=['POST'])
 def index():
     """
     Main WSGI application entry.
@@ -43,10 +43,6 @@ def index():
 
     path = normpath(abspath(dirname(__file__)))
     hooks = join(path, 'hooks')
-
-    # Only POST is implemented
-    if request.method != 'POST':
-        abort(501)
 
     # Load config
     with open(join(path, 'config.json'), 'r') as cfg:
@@ -87,16 +83,17 @@ def index():
             if not str(mac.hexdigest()) == str(signature):
                 abort(403)
 
+    # Gather data
+    try:
+      payload = request.json()
+    except:
+      abort(400)
+
     # Implement ping
     event = request.headers.get('X-GitHub-Event', 'ping')
     if event == 'ping':
-        return dumps({'msg': 'pong'})
+        return jsonify(msg='pong')
 
-    # Gather data
-    try:
-        payload = loads(request.data)
-    except:
-        abort(400)
 
     # Determining the branch is tricky, as it only appears for certain event
     # types an at different levels
