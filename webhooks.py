@@ -85,7 +85,7 @@ def index():
 
     # Gather data
     try:
-      payload = request.json()
+      payload = request.json
     except:
       abort(400)
 
